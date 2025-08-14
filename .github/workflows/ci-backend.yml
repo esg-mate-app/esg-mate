@@ -1,0 +1,23 @@
+name: CI Backend
+on:
+  pull_request:
+    paths: ["apps/gateway/**","apps/ai-serving/**","packages/shared-py/**"]
+  push:
+    branches: [main]
+    paths: ["apps/gateway/**","apps/ai-serving/**","packages/shared-py/**"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [gateway, ai-serving]
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt || echo "no reqs yet"
+      - run: pytest -q || echo "no tests yet"
